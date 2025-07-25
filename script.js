@@ -1,495 +1,775 @@
-// Enhanced 3D Portfolio JavaScript
+// Optimized Portfolio JavaScript - Performance & Accessibility Focused
 
-// Mobile Navigation Toggle with 3D effects
-const hamburger = document.querySelector('.hamburger');
-const navMenu = document.querySelector('.nav-menu');
+// Utility functions
+const Utils = {
+    // Debounce function for performance optimization
+    debounce(func, wait) {
+        let timeout;
+        return function executedFunction(...args) {
+            const later = () => {
+                clearTimeout(timeout);
+                func(...args);
+            };
+            clearTimeout(timeout);
+            timeout = setTimeout(later, wait);
+        };
+    },
 
-hamburger.addEventListener('click', () => {
-    hamburger.classList.toggle('active');
-    navMenu.classList.toggle('active');
-    
-    // Add 3D rotation effect to hamburger
-    if (hamburger.classList.contains('active')) {
-        hamburger.style.transform = 'translateZ(20px) rotateY(180deg)';
-    } else {
-        hamburger.style.transform = 'translateZ(0px) rotateY(0deg)';
+    // Throttle function for scroll events
+    throttle(func, limit) {
+        let inThrottle;
+        return function() {
+            const args = arguments;
+            const context = this;
+            if (!inThrottle) {
+                func.apply(context, args);
+                inThrottle = true;
+                setTimeout(() => inThrottle = false, limit);
+            }
+        }
+    },
+
+    // Check if element is in viewport
+    isInViewport(element) {
+        const rect = element.getBoundingClientRect();
+        return (
+            rect.top >= 0 &&
+            rect.left >= 0 &&
+            rect.bottom <= (window.innerHeight || document.documentElement.clientHeight) &&
+            rect.right <= (window.innerWidth || document.documentElement.clientWidth)
+        );
+    },
+
+    // Validate email
+    isValidEmail(email) {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return emailRegex.test(email);
     }
-});
-
-// Close mobile menu when clicking on a link
-document.querySelectorAll('.nav-link').forEach(n => n.addEventListener('click', () => {
-    hamburger.classList.remove('active');
-    navMenu.classList.remove('active');
-    hamburger.style.transform = 'translateZ(0px) rotateY(0deg)';
-}));
-
-// Enhanced smooth scrolling with 3D parallax effect
-document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-    anchor.addEventListener('click', function (e) {
-        e.preventDefault();
-        const targetId = this.getAttribute('href');
-        const target = document.querySelector(targetId);
-        
-        if (target) {
-            // Calculate offset to account for fixed navbar
-            const navbarHeight = document.querySelector('.navbar').offsetHeight;
-            const targetPosition = target.offsetTop - navbarHeight - 20;
-            
-            // Smooth scroll with custom easing
-            window.scrollTo({
-                top: targetPosition,
-                behavior: 'smooth'
-            });
-            
-            // Add subtle page transition effect
-            document.body.style.transition = 'transform 0.3s ease-out';
-            document.body.style.transform = 'perspective(1000px) rotateX(0.2deg)';
-            
-            setTimeout(() => {
-                document.body.style.transform = '';
-                document.body.style.transition = '';
-            }, 300);
-        }
-    });
-});
-
-// Enhanced active navigation highlighting with 3D effects
-window.addEventListener('scroll', () => {
-    let current = '';
-    const sections = document.querySelectorAll('section');
-    
-    sections.forEach(section => {
-        const sectionTop = section.offsetTop;
-        const sectionHeight = section.clientHeight;
-        if (pageYOffset >= (sectionTop - 200)) {
-            current = section.getAttribute('id');
-        }
-    });
-
-    document.querySelectorAll('.nav-link').forEach(link => {
-        link.classList.remove('active');
-        link.style.transform = '';
-        if (link.getAttribute('href') === `#${current}`) {
-            link.classList.add('active');
-            link.style.transform = 'translateZ(10px) scale(1.1)';
-        }
-    });
-});
-
-// Enhanced 3D intersection observer for animations
-const observerOptions = {
-    threshold: 0.1,
-    rootMargin: '0px 0px -50px 0px'
 };
 
-const observer3D = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-        if (entry.isIntersecting) {
-            entry.target.style.opacity = '1';
-            entry.target.style.transform = 'translateY(0) translateZ(10px)';
-            
-            // Add staggered 3D animation for child elements
-            const children = entry.target.querySelectorAll('.skill-item, .project-card, .highlight-item');
-            children.forEach((child, index) => {
-                setTimeout(() => {
-                    child.style.transform = 'translateY(0) translateZ(15px)';
-                    child.style.opacity = '1';
-                }, index * 100);
-            });
-        }
-    });
-}, observerOptions);
-
-// Enhanced mouse movement 3D effects - Optimized for smoothness
-let mouseX = 0;
-let mouseY = 0;
-let rafId = null;
-
-document.addEventListener('mousemove', (e) => {
-    mouseX = (e.clientX / window.innerWidth) * 2 - 1;
-    mouseY = (e.clientY / window.innerHeight) * 2 - 1;
-    
-    // Throttle mouse movement updates for better performance
-    if (rafId) return;
-    
-    rafId = requestAnimationFrame(() => {
-        // Apply subtle 3D tilt to cards based on mouse position
-        const cards = document.querySelectorAll('.card-3d, .skill-item, .project-card, .highlight-item');
-        cards.forEach(card => {
-            const rect = card.getBoundingClientRect();
-            const cardX = (e.clientX - rect.left - rect.width / 2) / rect.width;
-            const cardY = (e.clientY - rect.top - rect.height / 2) / rect.height;
-            
-            // Reduced rotation values for smoother experience
-            const rotateX = cardY * 5;
-            const rotateY = cardX * 5;
-            
-            card.style.transform = `perspective(1000px) rotateX(${-rotateX}deg) rotateY(${rotateY}deg) translateZ(10px)`;
-        });
+// Navigation functionality
+class Navigation {
+    constructor() {
+        this.hamburger = document.querySelector('.hamburger');
+        this.navMenu = document.querySelector('.nav-menu');
+        this.navLinks = document.querySelectorAll('.nav-link');
+        this.navbar = document.querySelector('.navbar');
         
-        // Subtle parallax effect for hero section
-        const hero = document.querySelector('.hero');
-        if (hero) {
-            hero.style.transform = `translate3d(${mouseX * 5}px, ${mouseY * 5}px, 0)`;
-        }
-        
-        rafId = null;
-    });
-});
-
-// Reset card transforms when mouse leaves - smoother transition
-document.addEventListener('mouseleave', () => {
-    const cards = document.querySelectorAll('.card-3d, .skill-item, .project-card, .highlight-item');
-    cards.forEach(card => {
-        card.style.transition = 'transform 0.5s ease-out';
-        card.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg) translateZ(10px)';
-        
-        // Remove transition after animation completes
-        setTimeout(() => {
-            card.style.transition = '';
-        }, 500);
-    });
-});
-
-// Enhanced typing effect with 3D text animation
-function typeWriter3D(element, text, speed = 100) {
-    let i = 0;
-    element.innerHTML = '';
-    element.style.transform = 'translateZ(20px)';
-    
-    function type() {
-        if (i < text.length) {
-            element.innerHTML += text.charAt(i);
-            // Add subtle 3D effect to each character
-            element.style.textShadow = `0 ${2 + Math.sin(i * 0.5) * 2}px ${8 + Math.cos(i * 0.3) * 4}px rgba(0, 0, 0, 0.3)`;
-            i++;
-            setTimeout(type, speed);
-        } else {
-            // Final 3D effect
-            element.style.textShadow = '0 4px 8px rgba(0, 0, 0, 0.3)';
-        }
+        this.init();
     }
-    
-    type();
-}
 
-// Initialize enhanced typing effect when page loads
-window.addEventListener('load', () => {
-    const subtitle = document.querySelector('.hero-subtitle');
-    if (subtitle) {
-        const originalText = subtitle.textContent;
-        typeWriter3D(subtitle, originalText, 80);
+    init() {
+        this.setupMobileMenu();
+        this.setupSmoothScrolling();
+        this.setupActiveNavigation();
+        this.setupKeyboardNavigation();
     }
-});
 
-// Enhanced navbar background with 3D depth
-window.addEventListener('scroll', () => {
-    const navbar = document.querySelector('.navbar');
-    const scrolled = window.scrollY;
-    
-    if (scrolled > 100) {
-        navbar.style.background = 'rgba(255, 255, 255, 0.05)';
-        navbar.style.backdropFilter = 'blur(25px)';
-        navbar.style.boxShadow = '0 8px 32px rgba(0, 0, 0, 0.2)';
-        navbar.style.transform = 'translateZ(100px)';
-    } else {
-        navbar.style.background = 'rgba(255, 255, 255, 0.1)';
-        navbar.style.backdropFilter = 'blur(20px)';
-        navbar.style.boxShadow = '0 8px 32px rgba(0, 0, 0, 0.1)';
-        navbar.style.transform = 'translateZ(100px)';
-    }
-});
+    setupMobileMenu() {
+        if (!this.hamburger || !this.navMenu) return;
 
-// Enhanced scroll to top with 3D animation
-const scrollToTop = () => {
-    // Add spinning 3D effect during scroll
-    const scrollButton = document.querySelector('.scroll-to-top');
-    if (scrollButton) {
-        scrollButton.style.transform = 'translateZ(20px) scale(1.2) rotateY(360deg)';
-        setTimeout(() => {
-            scrollButton.style.transform = 'translateZ(0px) scale(1) rotateY(0deg)';
-        }, 600);
-    }
-    
-    window.scrollTo({
-        top: 0,
-        behavior: 'smooth'
-    });
-};
-
-// Enhanced scroll to top button with 3D effects
-const createScrollToTopButton3D = () => {
-    const button = document.createElement('button');
-    button.innerHTML = '<i class="fas fa-chevron-up"></i>';
-    button.className = 'scroll-to-top';
-    
-    button.addEventListener('click', scrollToTop);
-    document.body.appendChild(button);
-    
-    // Show/hide button with 3D animation
-    window.addEventListener('scroll', () => {
-        if (window.pageYOffset > 300) {
-            button.style.opacity = '1';
-            button.style.visibility = 'visible';
-            button.style.transform = 'translateZ(0px) scale(1)';
-        } else {
-            button.style.opacity = '0';
-            button.style.visibility = 'hidden';
-            button.style.transform = 'translateZ(-20px) scale(0.8)';
-        }
-    });
-    
-    // Enhanced hover effects
-    button.addEventListener('mouseenter', () => {
-        button.style.transform = 'translateZ(20px) scale(1.1) rotateY(10deg)';
-    });
-    
-    button.addEventListener('mouseleave', () => {
-        button.style.transform = 'translateZ(0px) scale(1) rotateY(0deg)';
-    });
-};
-
-// Initialize enhanced scroll to top button
-createScrollToTopButton3D();
-
-// Enhanced 3D form and interaction handlers
-const handleFormSubmission = (formId) => {
-    const form = document.getElementById(formId);
-    if (form) {
-        form.addEventListener('submit', (e) => {
+        // Mobile menu toggle
+        this.hamburger.addEventListener('click', (e) => {
             e.preventDefault();
-            // Add 3D success animation
-            form.style.transform = 'perspective(1000px) rotateY(5deg) scale(1.05)';
-            setTimeout(() => {
-                form.style.transform = '';
-                alert('Thank you for your message! I\'ll get back to you soon.');
-            }, 300);
+            this.toggleMobileMenu();
+        });
+
+        // Keyboard support for hamburger
+        this.hamburger.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                this.toggleMobileMenu();
+            }
+        });
+
+        // Close mobile menu when clicking on links
+        this.navLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                this.closeMobileMenu();
+            });
+        });
+
+        // Close mobile menu when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!this.navbar.contains(e.target) && this.navMenu.classList.contains('active')) {
+                this.closeMobileMenu();
+            }
         });
     }
-};
 
-// Enhanced loading animation with 3D effects
-window.addEventListener('load', () => {
-    document.body.classList.add('loaded');
-    
-    // Add entrance animation to main elements
-    const sections = document.querySelectorAll('section');
-    sections.forEach((section, index) => {
-        section.style.opacity = '0';
-        section.style.transform = 'translateY(50px) translateZ(-20px)';
-        setTimeout(() => {
-            section.style.opacity = '1';
-            section.style.transform = 'translateY(0) translateZ(0)';
-        }, index * 200);
-    });
-});
-
-// Enhanced parallax effects with 3D depth - Optimized for smoothness
-let scrollRafId = null;
-
-window.addEventListener('scroll', () => {
-    if (scrollRafId) return;
-    
-    scrollRafId = requestAnimationFrame(() => {
-        const scrolled = window.pageYOffset;
-        const rate = scrolled * -0.2; // Reduced for smoother effect
+    toggleMobileMenu() {
+        const isActive = this.hamburger.classList.contains('active');
         
-        // Subtle parallax for hero background elements
-        const hero = document.querySelector('.hero');
-        if (hero) {
-            hero.style.transform = `translate3d(0, ${rate}px, 0)`;
+        if (isActive) {
+            this.closeMobileMenu();
+        } else {
+            this.openMobileMenu();
         }
+    }
+
+    openMobileMenu() {
+        this.hamburger.classList.add('active');
+        this.navMenu.classList.add('active');
+        this.hamburger.setAttribute('aria-expanded', 'true');
         
-        // Optimized 3D transform for cards based on scroll position
-        const cards = document.querySelectorAll('.skill-item, .project-card, .highlight-item');
-        cards.forEach((card, index) => {
-            const rect = card.getBoundingClientRect();
-            const scrollPercentage = Math.max(0, Math.min(1, (window.innerHeight - rect.top) / window.innerHeight));
-            const translateZ = scrollPercentage * 15; // Reduced for smoother effect
-            const rotateX = (0.5 - scrollPercentage) * 5; // Reduced rotation
-            
-            card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) translateZ(${translateZ}px)`;
+        // Focus first menu item for accessibility
+        const firstLink = this.navMenu.querySelector('.nav-link');
+        if (firstLink) {
+            setTimeout(() => firstLink.focus(), 100);
+        }
+    }
+
+    closeMobileMenu() {
+        this.hamburger.classList.remove('active');
+        this.navMenu.classList.remove('active');
+        this.hamburger.setAttribute('aria-expanded', 'false');
+    }
+
+    setupSmoothScrolling() {
+        this.navLinks.forEach(link => {
+            if (link.getAttribute('href').startsWith('#')) {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    this.smoothScrollToSection(link.getAttribute('href'));
+                });
+            }
         });
-        
-        scrollRafId = null;
-    });
-});
+    }
 
-// Enhanced counter animation with 3D effects
-const animateCounter3D = (element, target, duration = 2000) => {
-    let start = 0;
-    const increment = target / (duration / 16);
-    
-    const timer = setInterval(() => {
-        start += increment;
-        element.textContent = Math.floor(start);
-        
-        // Add 3D scaling effect during count
-        const scale = 1 + Math.sin(start / target * Math.PI) * 0.1;
-        element.style.transform = `perspective(1000px) scale(${scale}) translateZ(${start / target * 10}px)`;
-        
-        if (start >= target) {
-            element.textContent = target;
-            element.style.transform = 'perspective(1000px) scale(1) translateZ(10px)';
-            clearInterval(timer);
-        }
-    }, 16);
-};
+    smoothScrollToSection(targetId) {
+        const target = document.querySelector(targetId);
+        if (!target) return;
 
-// Initialize enhanced counters
-const initCounters3D = () => {
-    const counters = document.querySelectorAll('.counter');
-    counters.forEach(counter => {
-        const target = parseInt(counter.getAttribute('data-target'));
-        const counterObserver = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting && !entry.target.classList.contains('counted')) {
-                    entry.target.classList.add('counted');
-                    animateCounter3D(entry.target, target);
+        const navbarHeight = this.navbar.offsetHeight;
+        const targetPosition = target.offsetTop - navbarHeight - 20;
+
+        window.scrollTo({
+            top: targetPosition,
+            behavior: 'smooth'
+        });
+
+        // Update URL without triggering scroll
+        history.pushState(null, null, targetId);
+    }
+
+    setupActiveNavigation() {
+        const sections = document.querySelectorAll('section[id]');
+        
+        const updateActiveNav = Utils.throttle(() => {
+            let current = '';
+            
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop - 200;
+                const sectionHeight = section.clientHeight;
+                
+                if (window.pageYOffset >= sectionTop && 
+                    window.pageYOffset < sectionTop + sectionHeight) {
+                    current = section.getAttribute('id');
                 }
             });
-        });
-        counterObserver.observe(counter);
-    });
-};
 
-// Enhanced device tilt effects for mobile
-const initDeviceTilt = () => {
-    if (window.DeviceOrientationEvent && /Mobi|Android/i.test(navigator.userAgent)) {
-        window.addEventListener('deviceorientation', (e) => {
-            const gamma = e.gamma; // left-right tilt (-90 to 90)
-            const beta = e.beta;   // front-back tilt (-180 to 180)
-            
-            const cards = document.querySelectorAll('.card-3d, .skill-item, .project-card');
-            cards.forEach(card => {
-                const rotateX = beta * 0.1;
-                const rotateY = gamma * 0.1;
-                card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateZ(10px)`;
+            this.navLinks.forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('href') === `#${current}`) {
+                    link.classList.add('active');
+                }
+            });
+        }, 100);
+
+        window.addEventListener('scroll', updateActiveNav);
+        updateActiveNav(); // Initial call
+    }
+
+    setupKeyboardNavigation() {
+        // Escape key closes mobile menu
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && this.navMenu.classList.contains('active')) {
+                this.closeMobileMenu();
+                this.hamburger.focus();
+            }
+        });
+    }
+}
+
+// Lazy loading and intersection observer
+class LazyLoader {
+    constructor() {
+        this.sections = document.querySelectorAll('.section-loading');
+        this.init();
+    }
+
+    init() {
+        if ('IntersectionObserver' in window) {
+            this.setupIntersectionObserver();
+        } else {
+            // Fallback for older browsers
+            this.loadAllSections();
+        }
+    }
+
+    setupIntersectionObserver() {
+        const options = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    this.loadSection(entry.target);
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, options);
+
+        this.sections.forEach(section => {
+            observer.observe(section);
+        });
+    }
+
+    loadSection(section) {
+        section.classList.remove('section-loading');
+        section.classList.add('section-loaded');
+        
+        // Animate skill progress bars if this is the skills section
+        if (section.id === 'skills') {
+            this.animateSkillBars(section);
+        }
+    }
+
+    loadAllSections() {
+        this.sections.forEach(section => {
+            this.loadSection(section);
+        });
+    }
+
+    animateSkillBars(skillsSection) {
+        const progressBars = skillsSection.querySelectorAll('.skill-progress-bar');
+        
+        progressBars.forEach((bar, index) => {
+            setTimeout(() => {
+                const width = bar.style.width;
+                bar.style.width = '0%';
+                bar.style.transition = 'width 1.5s ease-in-out';
+                
+                setTimeout(() => {
+                    bar.style.width = width;
+                }, 100);
+            }, index * 200);
+        });
+    }
+}
+
+// Contact form functionality
+class ContactForm {
+    constructor() {
+        this.form = document.getElementById('contactForm');
+        this.submitButton = null;
+        this.loadingElement = null;
+        this.submitText = null;
+        
+        if (this.form) {
+            this.submitButton = this.form.querySelector('.form-submit');
+            this.loadingElement = this.form.querySelector('.loading');
+            this.submitText = this.form.querySelector('.submit-text');
+            this.init();
+        }
+    }
+
+    init() {
+        this.setupFormValidation();
+        this.setupFormSubmission();
+    }
+
+    setupFormValidation() {
+        const inputs = this.form.querySelectorAll('input, textarea, select');
+        
+        inputs.forEach(input => {
+            // Real-time validation
+            input.addEventListener('blur', () => {
+                this.validateField(input);
+            });
+
+            // Clear errors on focus
+            input.addEventListener('focus', () => {
+                this.clearFieldError(input);
             });
         });
     }
-};
 
-// Enhanced custom cursor with 3D trail effect - DISABLED
-const initCustomCursor3D = () => {
-    // Custom cursor disabled - using default system cursor
-    return;
-};
+    validateField(field) {
+        const value = field.value.trim();
+        const fieldName = field.name;
+        let isValid = true;
+        let errorMessage = '';
 
-// Initialize all enhanced 3D features
-document.addEventListener('DOMContentLoaded', () => {
-    // Observe elements for 3D animations
-    const animatedElements = document.querySelectorAll('.skill-item, .project-card, .contact-item, .highlight-item, .education-card');
-    animatedElements.forEach(el => {
-        observer3D.observe(el);
-    });
-    
-    initCounters3D();
-    initDeviceTilt();
-    initCustomCursor3D();
-    
-    // Add ripple effect to buttons
-    document.querySelectorAll('.btn').forEach(button => {
-        button.addEventListener('click', function(e) {
-            const ripple = document.createElement('span');
-            const rect = this.getBoundingClientRect();
-            const size = Math.max(rect.width, rect.height);
-            const x = e.clientX - rect.left - size / 2;
-            const y = e.clientY - rect.top - size / 2;
-            
-            ripple.style.cssText = `
-                position: absolute;
-                width: ${size}px;
-                height: ${size}px;
-                left: ${x}px;
-                top: ${y}px;
-                background: rgba(255, 255, 255, 0.4);
-                border-radius: 50%;
-                transform: scale(0);
-                animation: ripple3D 0.6s ease-out;
-                pointer-events: none;
-            `;
-            
-            this.style.position = 'relative';
-            this.style.overflow = 'hidden';
-            this.appendChild(ripple);
-            
-            setTimeout(() => ripple.remove(), 600);
+        // Remove existing error
+        this.clearFieldError(field);
+
+        // Required field validation
+        if (field.hasAttribute('required') && !value) {
+            errorMessage = `${this.getFieldLabel(fieldName)} is required`;
+            isValid = false;
+        }
+        // Email validation
+        else if (fieldName === 'email' && value && !Utils.isValidEmail(value)) {
+            errorMessage = 'Please enter a valid email address';
+            isValid = false;
+        }
+        // Message length validation
+        else if (fieldName === 'message' && value && value.length < 10) {
+            errorMessage = 'Message must be at least 10 characters long';
+            isValid = false;
+        }
+
+        if (!isValid) {
+            this.showFieldError(field, errorMessage);
+        }
+
+        return isValid;
+    }
+
+    validateForm() {
+        const inputs = this.form.querySelectorAll('input[required], textarea[required], select[required]');
+        let isValid = true;
+
+        inputs.forEach(input => {
+            if (!this.validateField(input)) {
+                isValid = false;
+            }
         });
-    });
-});
 
-// Add ripple animation keyframes
-const style = document.createElement('style');
-style.textContent = `
-    @keyframes ripple3D {
-        to {
-            transform: scale(2) translateZ(10px);
-            opacity: 0;
+        return isValid;
+    }
+
+    showFieldError(field, message) {
+        const errorElement = document.getElementById(`${field.name}Error`);
+        if (errorElement) {
+            errorElement.textContent = message;
+            errorElement.style.display = 'block';
+        }
+        
+        field.setAttribute('aria-invalid', 'true');
+        field.style.borderColor = '#ef4444';
+    }
+
+    clearFieldError(field) {
+        const errorElement = document.getElementById(`${field.name}Error`);
+        if (errorElement) {
+            errorElement.textContent = '';
+            errorElement.style.display = 'none';
+        }
+        
+        field.removeAttribute('aria-invalid');
+        field.style.borderColor = '';
+    }
+
+    getFieldLabel(fieldName) {
+        const labelMap = {
+            name: 'Name',
+            email: 'Email',
+            subject: 'Subject',
+            message: 'Message'
+        };
+        return labelMap[fieldName] || fieldName;
+    }
+
+    setupFormSubmission() {
+        this.form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            if (!this.validateForm()) {
+                return;
+            }
+
+            await this.submitForm();
+        });
+    }
+
+    async submitForm() {
+        this.setLoadingState(true);
+
+        try {
+            // Simulate form submission (replace with actual endpoint)
+            await this.simulateFormSubmission();
+            this.showSuccess();
+            this.form.reset();
+        } catch (error) {
+            this.showError('Failed to send message. Please try again or contact me directly.');
+            console.error('Form submission error:', error);
+        } finally {
+            this.setLoadingState(false);
         }
     }
-`;
-document.head.appendChild(style);
 
-// Enhanced keyboard navigation with 3D feedback
-document.addEventListener('keydown', (e) => {
-    const activeElement = document.activeElement;
-    
-    // Enhanced escape behavior
-    if (e.key === 'Escape') {
-        hamburger.classList.remove('active');
-        navMenu.classList.remove('active');
-        hamburger.style.transform = 'translateZ(0px) rotateY(0deg)';
+    async simulateFormSubmission() {
+        // Simulate network delay
+        return new Promise((resolve) => {
+            setTimeout(resolve, 2000);
+        });
+    }
+
+    setLoadingState(isLoading) {
+        if (isLoading) {
+            this.submitButton.disabled = true;
+            this.submitText.style.display = 'none';
+            this.loadingElement.style.display = 'inline-block';
+        } else {
+            this.submitButton.disabled = false;
+            this.submitText.style.display = 'inline';
+            this.loadingElement.style.display = 'none';
+        }
+    }
+
+    showSuccess() {
+        const successElement = document.getElementById('successMessage');
+        if (successElement) {
+            successElement.style.display = 'block';
+            setTimeout(() => {
+                successElement.style.display = 'none';
+            }, 5000);
+        }
+    }
+
+    showError(message) {
+        // Create or update error message
+        let errorElement = this.form.querySelector('.form-error');
+        if (!errorElement) {
+            errorElement = document.createElement('div');
+            errorElement.className = 'error form-error';
+            this.form.appendChild(errorElement);
+        }
         
-        // Add 3D escape animation
-        document.body.style.transform = 'perspective(1000px) rotateY(1deg)';
+        errorElement.textContent = message;
+        errorElement.style.display = 'block';
+        
         setTimeout(() => {
-            document.body.style.transform = '';
-        }, 200);
+            errorElement.style.display = 'none';
+        }, 5000);
     }
-    
-    // Enhanced home key behavior
-    if (e.key === 'Home') {
-        e.preventDefault();
-        // Add 3D zoom effect during scroll to top
-        document.body.style.transform = 'perspective(1000px) scale(0.95)';
-        scrollToTop();
-        setTimeout(() => {
-            document.body.style.transform = '';
-        }, 800);
+}
+
+// Scroll to top functionality
+class ScrollToTop {
+    constructor() {
+        this.button = null;
+        this.createButton();
+        this.init();
     }
-    
-    // Add 3D focus effects
-    if (e.key === 'Tab') {
-        setTimeout(() => {
-            if (activeElement && (activeElement.tagName === 'A' || activeElement.tagName === 'BUTTON')) {
-                activeElement.style.transform = 'perspective(1000px) translateZ(15px) scale(1.05)';
-                setTimeout(() => {
-                    activeElement.style.transform = '';
-                }, 200);
+
+    createButton() {
+        this.button = document.createElement('button');
+        this.button.className = 'scroll-to-top';
+        this.button.innerHTML = '<i class="fas fa-chevron-up"></i>';
+        this.button.setAttribute('aria-label', 'Scroll to top');
+        this.button.setAttribute('title', 'Scroll to top');
+        
+        document.body.appendChild(this.button);
+    }
+
+    init() {
+        this.button.addEventListener('click', () => {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        });
+
+        // Show/hide button based on scroll position
+        const toggleButton = Utils.throttle(() => {
+            if (window.pageYOffset > 300) {
+                this.button.classList.add('visible');
+            } else {
+                this.button.classList.remove('visible');
             }
-        }, 0);
+        }, 100);
+
+        window.addEventListener('scroll', toggleButton);
     }
-});
+}
 
-// Enhanced print optimization with 3D reset
-window.addEventListener('beforeprint', () => {
-    document.body.classList.add('printing');
-    // Reset all 3D transforms for printing
-    document.querySelectorAll('*').forEach(el => {
-        el.style.transform = 'none';
-        el.style.perspective = 'none';
-    });
-});
+// Performance monitoring
+class PerformanceMonitor {
+    constructor() {
+        this.init();
+    }
 
-window.addEventListener('afterprint', () => {
-    document.body.classList.remove('printing');
-    // Restore 3D effects after printing
-    setTimeout(() => {
-        location.reload();
-    }, 100);
-});
+    init() {
+        // Monitor page load performance
+        window.addEventListener('load', () => {
+            if ('performance' in window) {
+                const perfData = performance.getEntriesByType('navigation')[0];
+                console.log('Page Load Performance:', {
+                    loadTime: perfData.loadEventEnd - perfData.loadEventStart,
+                    domReady: perfData.domContentLoadedEventEnd - perfData.domContentLoadedEventStart,
+                    totalTime: perfData.loadEventEnd - perfData.fetchStart
+                });
+            }
+        });
 
-console.log('🚀 Enhanced 3D Portfolio Website Loaded Successfully!');
-console.log('✨ Features: 3D transforms, parallax effects, mouse interactions, and depth!');
-console.log('💼 Ready to showcase Ashish Gupta\'s cyber security expertise in 3D!');
+        // Monitor long tasks
+        if ('PerformanceObserver' in window) {
+            try {
+                const observer = new PerformanceObserver((list) => {
+                    for (const entry of list.getEntries()) {
+                        if (entry.duration > 50) {
+                            console.warn('Long task detected:', entry.duration + 'ms');
+                        }
+                    }
+                });
+                observer.observe({ entryTypes: ['longtask'] });
+            } catch (e) {
+                // PerformanceObserver not supported
+            }
+        }
+    }
+}
+
+// Error handling
+class ErrorHandler {
+    constructor() {
+        this.init();
+    }
+
+    init() {
+        // Global error handler
+        window.addEventListener('error', (e) => {
+            console.error('JavaScript Error:', {
+                message: e.message,
+                filename: e.filename,
+                lineno: e.lineno,
+                colno: e.colno,
+                error: e.error
+            });
+            
+            // Don't show error to user in production
+            if (window.location.hostname === 'localhost') {
+                this.showErrorToUser('A JavaScript error occurred. Check console for details.');
+            }
+        });
+
+        // Unhandled promise rejection handler
+        window.addEventListener('unhandledrejection', (e) => {
+            console.error('Unhandled Promise Rejection:', e.reason);
+            
+            if (window.location.hostname === 'localhost') {
+                this.showErrorToUser('An async operation failed. Check console for details.');
+            }
+        });
+    }
+
+    showErrorToUser(message) {
+        const errorDiv = document.createElement('div');
+        errorDiv.style.cssText = `
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #ef4444;
+            color: white;
+            padding: 1rem;
+            border-radius: 8px;
+            z-index: 10000;
+            max-width: 300px;
+        `;
+        errorDiv.textContent = message;
+        
+        document.body.appendChild(errorDiv);
+        
+        setTimeout(() => {
+            if (errorDiv.parentNode) {
+                errorDiv.parentNode.removeChild(errorDiv);
+            }
+        }, 5000);
+    }
+}
+
+// Accessibility enhancements
+class AccessibilityEnhancer {
+    constructor() {
+        this.init();
+    }
+
+    init() {
+        this.setupKeyboardNavigation();
+        this.setupFocusManagement();
+        this.setupARIALabels();
+        this.setupReducedMotion();
+    }
+
+    setupKeyboardNavigation() {
+        // Skip to main content link
+        const skipLink = document.createElement('a');
+        skipLink.href = '#main';
+        skipLink.textContent = 'Skip to main content';
+        skipLink.className = 'skip-link';
+        skipLink.style.cssText = `
+            position: absolute;
+            top: -40px;
+            left: 6px;
+            background: var(--primary-color);
+            color: white;
+            padding: 8px;
+            text-decoration: none;
+            border-radius: 4px;
+            z-index: 10000;
+        `;
+        
+        skipLink.addEventListener('focus', () => {
+            skipLink.style.top = '6px';
+        });
+        
+        skipLink.addEventListener('blur', () => {
+            skipLink.style.top = '-40px';
+        });
+        
+        document.body.insertBefore(skipLink, document.body.firstChild);
+
+        // Add main landmark if not present
+        const mainContent = document.querySelector('main') || document.querySelector('.hero');
+        if (mainContent && !mainContent.id) {
+            mainContent.id = 'main';
+        }
+    }
+
+    setupFocusManagement() {
+        // Ensure all interactive elements are focusable
+        const interactiveElements = document.querySelectorAll('button, a, input, textarea, select');
+        
+        interactiveElements.forEach(element => {
+            if (!element.hasAttribute('tabindex') && element.tabIndex < 0) {
+                element.tabIndex = 0;
+            }
+        });
+
+        // Focus trap for mobile menu
+        const navMenu = document.querySelector('.nav-menu');
+        if (navMenu) {
+            navMenu.addEventListener('keydown', (e) => {
+                if (e.key === 'Tab' && navMenu.classList.contains('active')) {
+                    const focusableElements = navMenu.querySelectorAll('a, button');
+                    const firstElement = focusableElements[0];
+                    const lastElement = focusableElements[focusableElements.length - 1];
+
+                    if (e.shiftKey && document.activeElement === firstElement) {
+                        e.preventDefault();
+                        lastElement.focus();
+                    } else if (!e.shiftKey && document.activeElement === lastElement) {
+                        e.preventDefault();
+                        firstElement.focus();
+                    }
+                }
+            });
+        }
+    }
+
+    setupARIALabels() {
+        // Add ARIA labels where missing
+        const socialLinks = document.querySelectorAll('.social-link');
+        socialLinks.forEach(link => {
+            if (!link.getAttribute('aria-label')) {
+                const icon = link.querySelector('i');
+                if (icon) {
+                    const classList = Array.from(icon.classList);
+                    let label = 'Social link';
+                    
+                    if (classList.includes('fa-envelope')) label = 'Email';
+                    else if (classList.includes('fa-linkedin-in')) label = 'LinkedIn';
+                    else if (classList.includes('fa-github')) label = 'GitHub';
+                    
+                    link.setAttribute('aria-label', label);
+                }
+            }
+        });
+
+        // Add role attributes where needed
+        const cards = document.querySelectorAll('.card, .skill-item, .project-card');
+        cards.forEach(card => {
+            if (!card.getAttribute('role')) {
+                card.setAttribute('role', 'article');
+            }
+        });
+    }
+
+    setupReducedMotion() {
+        // Respect user's motion preferences
+        const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+        
+        const handleMotionChange = (e) => {
+            if (e.matches) {
+                document.body.classList.add('reduce-motion');
+            } else {
+                document.body.classList.remove('reduce-motion');
+            }
+        };
+
+        mediaQuery.addListener(handleMotionChange);
+        handleMotionChange(mediaQuery);
+    }
+}
+
+// Service Worker registration for offline functionality
+class ServiceWorkerManager {
+    constructor() {
+        this.init();
+    }
+
+    init() {
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                this.registerServiceWorker();
+            });
+        }
+    }
+
+    async registerServiceWorker() {
+        try {
+            const registration = await navigator.serviceWorker.register('/sw.js');
+            console.log('ServiceWorker registered successfully:', registration.scope);
+        } catch (error) {
+            console.log('ServiceWorker registration failed:', error);
+        }
+    }
+}
+
+// Main application initialization
+class PortfolioApp {
+    constructor() {
+        this.init();
+    }
+
+    init() {
+        // Wait for DOM to be ready
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', () => {
+                this.initializeComponents();
+            });
+        } else {
+            this.initializeComponents();
+        }
+
+        // Initialize error handling first
+        new ErrorHandler();
+    }
+
+    initializeComponents() {
+        try {
+            // Initialize all components
+            new Navigation();
+            new LazyLoader();
+            new ContactForm();
+            new ScrollToTop();
+            new AccessibilityEnhancer();
+            new PerformanceMonitor();
+            new ServiceWorkerManager();
+
+            console.log('✅ Portfolio website initialized successfully!');
+            console.log('🚀 Optimized for performance and accessibility');
+            
+        } catch (error) {
+            console.error('❌ Error initializing portfolio components:', error);
+        }
+    }
+}
+
+// Initialize the application
+new PortfolioApp();

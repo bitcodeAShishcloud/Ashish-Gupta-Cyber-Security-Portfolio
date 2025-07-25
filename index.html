@@ -3,39 +3,59 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ashish Gupta - Cyber Security Student</title>
+    <title>Ashish Gupta - Cyber Security Student & Developer</title>
+    <meta name="description" content="Ashish Gupta - 2nd year Cyber Security student at NIET with expertise in network defense, ethical hacking, and digital forensics. Passionate about protecting digital assets.">
+    <meta name="keywords" content="cybersecurity, ethical hacking, network security, digital forensics, python developer, NIET student">
+    <meta name="author" content="Ashish Gupta">
+    
+    <!-- Open Graph meta tags -->
+    <meta property="og:title" content="Ashish Gupta - Cyber Security Student">
+    <meta property="og:description" content="2nd year Cyber Security student specializing in network defense and ethical hacking">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://yourwebsite.com">
+    
+    <!-- Twitter Card meta tags -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Ashish Gupta - Cyber Security Student">
+    <meta name="twitter:description" content="2nd year Cyber Security student specializing in network defense and ethical hacking">
+    
     <link rel="stylesheet" href="styles.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
     <!-- Navigation -->
-    <nav class="navbar">
+    <nav class="navbar" role="navigation" aria-label="Main navigation">
         <div class="nav-container">
             <div class="nav-logo">
                 <h2>Ashish Gupta</h2>
             </div>
             <ul class="nav-menu">
                 <li class="nav-item">
-                    <a href="#home" class="nav-link">Home</a>
+                    <a href="#home" class="nav-link" aria-label="Go to home section">Home</a>
                 </li>
                 <li class="nav-item">
-                    <a href="#about" class="nav-link">About</a>
+                    <a href="#about" class="nav-link" aria-label="Go to about section">About</a>
                 </li>
                 <li class="nav-item">
-                    <a href="#education" class="nav-link">Education</a>
+                    <a href="#education" class="nav-link" aria-label="Go to education section">Education</a>
                 </li>
                 <li class="nav-item">
-                    <a href="#skills" class="nav-link">Skills</a>
+                    <a href="#experience" class="nav-link" aria-label="Go to experience section">Experience</a>
                 </li>
                 <li class="nav-item">
-                    <a href="#projects" class="nav-link">Projects</a>
+                    <a href="#skills" class="nav-link" aria-label="Go to skills section">Skills</a>
                 </li>
                 <li class="nav-item">
-                    <a href="#contact" class="nav-link">Contact</a>
+                    <a href="#projects" class="nav-link" aria-label="Go to projects section">Projects</a>
+                </li>
+                <li class="nav-item">
+                    <a href="#contact" class="nav-link" aria-label="Go to contact section">Contact</a>
                 </li>
             </ul>
-            <div class="hamburger">
+            <div class="hamburger" aria-label="Toggle mobile menu" role="button" tabindex="0">
                 <span class="bar"></span>
                 <span class="bar"></span>
                 <span class="bar"></span>
@@ -166,6 +186,45 @@
                             <span class="subject-tag">Cyber Law</span>
                         </div>
                     </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Experience Section -->
+    <section id="experience" class="experience section-loading">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Experience</h2>
+                <p class="section-subtitle">My professional journey and internships</p>
+            </div>
+            <div class="experience-timeline">
+                <div class="experience-item">
+                    <div class="experience-content">
+                        <h3>Cyber Security Intern</h3>
+                        <h4>Prodigy InfoTech</h4>
+                        <p>Completed cybersecurity tasks including security analysis, vulnerability assessment, and threat detection projects. Gained hands-on experience with security tools and methodologies.</p>
+                        <div class="project-tech">
+                            <span class="tech-tag">Python</span>
+                            <span class="tech-tag">Security Analysis</span>
+                            <span class="tech-tag">Vulnerability Assessment</span>
+                        </div>
+                    </div>
+                    <div class="experience-date">2025</div>
+                </div>
+                
+                <div class="experience-item">
+                    <div class="experience-content">
+                        <h3>Python Developer Intern</h3>
+                        <h4>CodSoft</h4>
+                        <p>Developed various Python applications demonstrating programming proficiency and problem-solving skills. Created desktop applications and worked on automation projects.</p>
+                        <div class="project-tech">
+                            <span class="tech-tag">Python</span>
+                            <span class="tech-tag">Desktop Applications</span>
+                            <span class="tech-tag">Automation</span>
+                        </div>
+                    </div>
+                    <div class="experience-date">2025</div>
                 </div>
             </div>
         </div>
@@ -377,7 +436,7 @@
                         </div>
                         <div class="contact-details">
                             <h4>LinkedIn</h4>
-                            <a href="https://linkedin.com/in/ashish-gupta-037973259/" target="_blank">Connect with me</a>
+                            <a href="https://linkedin.com/in/ashish-gupta-037973259/" target="_blank" rel="noopener noreferrer">Connect with me</a>
                         </div>
                     </div>
                     <div class="contact-item">
@@ -386,23 +445,46 @@
                         </div>
                         <div class="contact-details">
                             <h4>GitHub</h4>
-                            <a href="https://github.com/bitcodeAShishcloud" target="_blank">View my code</a>
+                            <a href="https://github.com/bitcodeAShishcloud" target="_blank" rel="noopener noreferrer">View my code</a>
                         </div>
                     </div>
                 </div>
-                <div class="contact-cta">
-                    <h3>Ready to collaborate?</h3>
-                    <p>I'm always open to discussing cyber security projects, internship opportunities, or just connecting with fellow security enthusiasts.</p>
-                    <div class="contact-buttons">
-                        <a href="mailto:agupta38160@gmail.com" class="btn btn-primary">
-                            <i class="fas fa-envelope"></i> Send Email
-                        </a>
-                        <a href="https://docs.google.com/document/d/1ZhhHUgvsrZ3szCOAotrpf5aGBosV57UlGEs6dalI7Oc" 
-                           target="_blank" class="btn btn-secondary">
-                            <i class="fas fa-download"></i> Download Resume
-                        </a>
+                
+                <form class="contact-form" id="contactForm" novalidate>
+                    <h3>Send me a message</h3>
+                    <div class="form-group">
+                        <label for="name">Name *</label>
+                        <input type="text" id="name" name="name" required aria-describedby="nameError">
+                        <div class="error" id="nameError"></div>
                     </div>
-                </div>
+                    <div class="form-group">
+                        <label for="email">Email *</label>
+                        <input type="email" id="email" name="email" required aria-describedby="emailError">
+                        <div class="error" id="emailError"></div>
+                    </div>
+                    <div class="form-group">
+                        <label for="subject">Subject *</label>
+                        <select id="subject" name="subject" required aria-describedby="subjectError">
+                            <option value="">Select a subject</option>
+                            <option value="collaboration">Collaboration Opportunity</option>
+                            <option value="internship">Internship Inquiry</option>
+                            <option value="project">Project Discussion</option>
+                            <option value="networking">Professional Networking</option>
+                            <option value="other">Other</option>
+                        </select>
+                        <div class="error" id="subjectError"></div>
+                    </div>
+                    <div class="form-group">
+                        <label for="message">Message *</label>
+                        <textarea id="message" name="message" placeholder="Tell me about your project or inquiry..." required aria-describedby="messageError"></textarea>
+                        <div class="error" id="messageError"></div>
+                    </div>
+                    <button type="submit" class="form-submit">
+                        <span class="submit-text">Send Message</span>
+                        <span class="loading" style="display: none;"></span>
+                    </button>
+                    <div class="success" id="successMessage" style="display: none;">Message sent successfully! I'll get back to you soon.</div>
+                </form>
             </div>
         </div>
     </section>
