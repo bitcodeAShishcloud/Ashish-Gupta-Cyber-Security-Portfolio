@@ -1,14 +1,5 @@
 # 🛡️ Ashish Gupta - Cyber Security Portfolio
 
-## 📝 GitHub Repository Description
-```
-🛡️ Modern cyber security portfolio with 3D animations, matrix effects & blue aesthetics. Features responsive design, glass morphism, and smooth 60fps performance. Built for NIET cyber security student Ashish Gupta. HTML/CSS/JS.
-```
-
-*Copy the above description to your GitHub repository settings under "About" section.*
-
-**Keywords**: `portfolio` `cyber-security` `3d-animations` `responsive-design` `web-development` `matrix-effects` `glass-morphism` `html-css-js`
-
 A stunning, 3D-enhanced portfolio website for Ashish Gupta, a 2nd-year Cyber Security student at NIET, Greater Noida. Features a cutting-edge cyber security theme with blue aesthetics and smooth animations.
 
 ## ✨ Key Features
