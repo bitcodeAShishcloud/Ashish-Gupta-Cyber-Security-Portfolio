@@ -976,8 +976,8 @@ section {
 
 /* Footer */
 .footer {
-    background: var(--text-primary);
-    color: var(--bg-primary);
+    background: #1d2536; /* Deep blue for a professional look */
+    color: #f9fafb;      /* White text for contrast */
     padding: 3rem 0 1rem;
 }
 
@@ -992,10 +992,11 @@ section {
     font-size: 1.5rem;
     font-weight: 600;
     margin-bottom: 1rem;
+    color: #fff;
 }
 
 .footer-info p {
-    color: rgba(255, 255, 255, 0.8);
+    color: #cbd5e1; /* Softer white for secondary text */
     line-height: 1.6;
 }
 
@@ -1011,23 +1012,28 @@ section {
     width: 40px;
     height: 40px;
     border-radius: 50%;
-    background: rgba(255, 255, 255, 0.1);
-    color: white;
+    background: rgba(37, 99, 235, 0.12); /* Subtle blue background */
+    color: #f9fafb;
     text-decoration: none;
     transition: all 0.3s ease;
     font-size: 1.2rem;
+    box-shadow: 0 2px 8px rgba(37, 99, 235, 0.08);
 }
 
 .footer-link:hover {
     background: var(--primary-color);
-    transform: translateY(-2px);
+    color: #fff;
+    transform: translateY(-2px) scale(1.08);
+    box-shadow: 0 4px 16px rgba(37, 99, 235, 0.18);
 }
 
 .footer-bottom {
     text-align: center;
     padding-top: 2rem;
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
-    color: rgba(255, 255, 255, 0.6);
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    color: #cbd5e1;
+    font-size: 0.95rem;
+    letter-spacing: 0.02em;
 }
 
 /* Scroll to Top Button */
