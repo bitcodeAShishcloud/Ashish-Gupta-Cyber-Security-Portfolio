@@ -8,7 +8,7 @@
 
 **🎓 B.Tech CSE (Cyber Security) | NIET Greater Noida | 2nd Year**
 
-[🌐 Live Portfolio](https://bitcodeashishcloud.github.io/Ashish-Gupta-Portfolio/) • [📧 Contact](mailto:agupta38160@gmail.com) • [💼 LinkedIn](https://www.linkedin.com/in/ashish-gupta-037973259/) • [📄 Resume](https://drive.google.com/file/d/1rwPbTUc2Tie5C5xsDDjVMbdTAoc8LKtQ/view)
+[🌐 Live Portfolio](https://bitcodeashishcloud.github.io/Ashish-Gupta-Cyber-Security-Portfolio/) • [📧 Contact](mailto:agupta38160@gmail.com) • [💼 LinkedIn](https://www.linkedin.com/in/ashish-gupta-037973259/) • [📄 Resume](https://drive.google.com/file/d/1rwPbTUc2Tie5C5xsDDjVMbdTAoc8LKtQ/view)
 
 </div>
 
@@ -666,4 +666,5 @@ This portfolio is open source under MIT License:
 
 **Last Updated**: July 25, 2025  
 **Version**: 2.0 - Cyber Security Enhanced with 3D Effects
+
 
